@@ -30,6 +30,11 @@ export function AuthProvider({ children }) {
     localStorage.setItem("username", username);
     setUser({ username });
   };
+  const register = async (username, email, password) => {
+  await axiosClient.post("/auth/register/", { username, email, password });
+  // Registration succeeded — log them in right away using the same credentials.
+  await login(username, password);
+};
 
   const logout = () => {
     clearAuthTokens();
@@ -38,7 +43,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

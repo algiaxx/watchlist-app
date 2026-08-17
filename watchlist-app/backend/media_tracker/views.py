@@ -1,6 +1,11 @@
 from rest_framework import viewsets, permissions
 from .models import Media
 from .serializers import MediaSerializer
+from rest_framework import generics
+from .serializers import RegisterSerializer
+from django.contrib.auth.models import User
+
+
 
 
 class MediaViewSet(viewsets.ModelViewSet):
@@ -26,3 +31,8 @@ class MediaViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+        
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]

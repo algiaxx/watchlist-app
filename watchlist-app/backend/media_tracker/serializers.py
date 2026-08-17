@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Media
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 
 
 class MediaSerializer(serializers.ModelSerializer):
@@ -18,3 +20,17 @@ class MediaSerializer(serializers.ModelSerializer):
         if attrs.get("rating") is not None:
             attrs["status"] = Media.Status.WATCHED
         return attrs
+    
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, validators=[validate_password])
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password"]
+
+    def create(self, validated_data):
+        return User.objects.create_user(
+            username=validated_data["username"],
+            email=validated_data.get("email", ""),
+            password=validated_data["password"],
+        )
